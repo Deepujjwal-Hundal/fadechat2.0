@@ -11,7 +11,7 @@ export const Input: React.FC<InputProps> = ({ label, error, className = '', ...p
       {label && <label className="text-xs text-neon-blue uppercase tracking-widest mb-1">{label}</label>}
       <input 
         className={`bg-neon-panel border ${error ? 'border-red-500' : 'border-gray-700 focus:border-neon-blue'} 
-          text-white px-4 py-3 rounded-lg outline-none transition-colors placeholder-gray-600 ${className}`}
+          text-white text-base px-4 py-3 rounded-lg outline-none transition-colors placeholder-gray-600 ${className}`}
         {...props}
       />
       {error && <span className="text-xs text-red-500 mt-1">{error}</span>}
