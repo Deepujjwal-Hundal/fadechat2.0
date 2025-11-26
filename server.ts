@@ -30,7 +30,7 @@ const io = new Server(httpServer, {
 
 // Serve static files from the build directory (for production)
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use('/', express.static(path.join(__dirname, 'dist')));
 
 // --- STATE MANAGEMENT (In-Memory) ---
 const rooms = new Map<string, Room>(); // roomId -> Room
@@ -49,7 +49,7 @@ const generateRoomCode = (): string => {
 
 // --- SOCKET LOGIC ---
 io.on('connection', (socket) => {
-  console.log(`[Connect] Socket ${socket.id}`);
+  console.log(`[Connect] Socket ${socket.id} connected`);
 
   // 1. REGISTER USER
   socket.on('login', (username: string, callback) => {

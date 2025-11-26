@@ -6,7 +6,7 @@ import { Button } from './components/Button';
 import { Input } from './components/Input';
 import { InteractiveBackground } from './components/InteractiveBackground';
 import { ScreenshotProtector } from './components/ScreenshotProtector';
-import { Lock, LogOut, Send, Users, Activity, Hash, ArrowLeft, Trash2 } from 'lucide-react';
+import { Lock, LogOut, Send, Users, Activity, Hash, ArrowLeft, Trash2, Loader2 } from 'lucide-react';
 
 const App = () => {
   // --- STATE ---
@@ -17,7 +17,8 @@ const App = () => {
   // Auth Form State
   const [authMode, setAuthMode] = useState<'LOGIN' | 'REGISTER'>('LOGIN');
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState(''); // Kept for UI, but backend only uses username for ephemeral session
+  const [password, setPassword] = useState(''); // Kept for UI
+  const [isLoading, setIsLoading] = useState(false);
   
   // Dashboard State
   const [joinCode, setJoinCode] = useState('');
@@ -97,15 +98,18 @@ const App = () => {
     e.preventDefault();
     if (!username) return;
     setError('');
+    setIsLoading(true);
     try {
       // Connect to real WebSocket
       const u = await socketService.connect(username);
       setUser(u);
       setView('DASHBOARD');
       setError('');
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError('Connection failed. Server might be offline.');
+      setError(err.message || 'Connection failed. Ensure server is running on port 3000.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -131,7 +135,7 @@ const App = () => {
       setCurrentRoom(room);
       setMessages([]);
       setView('CHAT');
-    } catch (err) {
+    } catch (err: any) {
       console.error("[Join Room Error]:", err);
       setError('Uplink failed: Invalid code or room expired.');
     }
@@ -195,7 +199,10 @@ const App = () => {
               label="Username" 
               placeholder="Display Name" 
               value={username} 
-              onChange={e => setUsername(e.target.value)} 
+              onChange={e => {
+                setUsername(e.target.value);
+                setError('');
+              }} 
             />
             <Input 
               label="Password" 
@@ -205,10 +212,17 @@ const App = () => {
               onChange={e => setPassword(e.target.value)} 
             />
             
-            {error && <div className="text-red-400 text-sm text-center">{error}</div>}
+            {error && <div className="text-red-400 text-sm text-center bg-red-900/20 p-2 rounded border border-red-500/30">{error}</div>}
 
-            <Button fullWidth type="submit" disabled={!username || !password}>
-              {authMode === 'LOGIN' ? 'Decrypt Identity' : 'Generate Identity'}
+            <Button fullWidth type="submit" disabled={!username || !password || isLoading}>
+              {isLoading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Connecting...</span>
+                </div>
+              ) : (
+                authMode === 'LOGIN' ? 'Decrypt Identity' : 'Generate Identity'
+              )}
             </Button>
           </form>
           

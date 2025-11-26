@@ -1,9 +1,11 @@
 import { io, Socket } from 'socket.io-client';
 import { User, Room, ChatMessage } from '../types';
 
-// In development (Vite), point to the backend port 3000.
-// In production, undefined means "same host/port" as the served page.
-const SOCKET_URL = (import.meta as any).env?.DEV ? 'http://localhost:3000' : undefined;
+// Robust Dev Detection:
+// If running on Vite's default port 5173, assume backend is on 3000.
+// Otherwise (production/served), use relative path (undefined).
+const isDev = window.location.port === '5173';
+const SOCKET_URL = isDev ? 'http://localhost:3000' : undefined;
 
 class SocketService {
   private socket: Socket | null = null;
@@ -11,21 +13,31 @@ class SocketService {
 
   connect(username: string): Promise<User> {
     return new Promise((resolve, reject) => {
-      this.socket = io(SOCKET_URL);
+      // Force websocket transport to avoid xhr poll errors (CORS/Proxy issues)
+      this.socket = io(SOCKET_URL || '/', {
+        transports: ['websocket'],
+        reconnectionAttempts: 5
+      });
+
+      console.log(`[Socket] Connecting to ${SOCKET_URL || 'relative path'}...`);
 
       this.socket.on('connect', () => {
+        console.log('[Socket] Connected. Authenticating...');
         // Authenticate immediately upon connection
         this.socket?.emit('login', username, (response: any) => {
           if (response.success) {
+            console.log('[Socket] Login successful');
             resolve(response.user);
           } else {
+            console.error('[Socket] Login failed:', response.error);
             reject(response.error);
           }
         });
       });
 
       this.socket.on('connect_error', (err) => {
-        reject(err);
+        console.error('[Socket] Connection Error:', err.message);
+        reject(new Error(`Connection failed: ${err.message}`));
       });
 
       // Global event listener setup
