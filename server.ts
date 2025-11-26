@@ -5,6 +5,11 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 
+// --- CONFIGURATION ---
+const PORT = process.env.PORT || 3000;
+const CLEANUP_INTERVAL = 60 * 1000; // Check every 1 minute
+const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour (Room expires if idle for this long)
+
 // --- TYPES (Mirrored from frontend types.ts for server-side logic) ---
 interface User {
   id: string;
@@ -16,6 +21,7 @@ interface Room {
   code: string;
   creatorId: string; // This will be the socket.id
   participantCount: number;
+  lastActive: number; // Timestamp for inactivity cleanup
 }
 
 // --- SERVER SETUP ---
@@ -30,7 +36,8 @@ const io = new Server(httpServer, {
 
 // Serve static files from the build directory (for production)
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-app.use('/', express.static(path.join(__dirname, 'dist')));
+// Cast express.static result to any to avoid TypeScript definition mismatch between express and serve-static
+app.use('/', express.static(path.join(__dirname, 'dist')) as any);
 
 // --- STATE MANAGEMENT (In-Memory) ---
 const rooms = new Map<string, Room>(); // roomId -> Room
@@ -74,7 +81,8 @@ io.on('connection', (socket) => {
       id: roomId,
       code,
       creatorId: socket.id,
-      participantCount: 1
+      participantCount: 1,
+      lastActive: Date.now()
     };
 
     rooms.set(roomId, newRoom);
@@ -98,7 +106,8 @@ io.on('connection', (socket) => {
     }
 
     socket.join(room.id);
-    room.participantCount++; // Simple counter, not strictly accurate if user joins twice, but sufficient for display
+    room.participantCount++; // Simple counter
+    room.lastActive = Date.now(); // Update activity
     
     // Notify others
     socket.to(room.id).emit('user_joined', {
@@ -113,9 +122,9 @@ io.on('connection', (socket) => {
   // 4. SEND MESSAGE (Relay encrypted payload)
   socket.on('send_message', (payload) => {
     // payload should contain roomId, content, iv, senderId, etc.
-    // The server does NOT decrypt. It just relays.
     const room = rooms.get(payload.roomId);
     if (room) {
+      room.lastActive = Date.now(); // Update activity
       io.to(room.id).emit('new_message', payload);
     }
   });
@@ -131,17 +140,12 @@ io.on('connection', (socket) => {
     if (user) {
       console.log(`[Disconnect] ${user.username}`);
       
-      // Find all rooms this user is in (socket.io tracks this, but we need to check our logic)
-      // Actually, socket.io automatically leaves rooms on disconnect, 
-      // but we need to check if they were the CREATOR of any room.
-      
       rooms.forEach((room, roomId) => {
         if (room.creatorId === socket.id) {
           destroyRoom(roomId, 'Creator disconnected');
         } else {
-            // It's just a participant leaving, we could notify, but strictly 
-            // the prompt only requested notifying if the Creator leaves.
-            // But let's notify anyway for polish.
+             // If a normal participant leaves, update activity
+             room.lastActive = Date.now();
              io.to(roomId).emit('user_left', { userId: socket.id, roomId });
         }
       });
@@ -160,6 +164,7 @@ function handleUserLeavingRoom(socket: any, roomId: string) {
   if (room.creatorId === socket.id) {
     destroyRoom(roomId, 'Creator left the room');
   } else {
+    room.lastActive = Date.now();
     socket.leave(roomId);
     socket.to(roomId).emit('user_left', { userId: socket.id, roomId });
   }
@@ -172,7 +177,7 @@ function destroyRoom(roomId: string, reason: string) {
     io.to(roomId).emit('room_destroyed', { roomId, reason });
     
     // Make everyone leave socket room
-    io.in(roomId).disconnectSockets(false); // Or just let them handle the event
+    io.in(roomId).disconnectSockets(false); 
     
     // Cleanup State
     roomCodes.delete(room.code);
@@ -180,12 +185,29 @@ function destroyRoom(roomId: string, reason: string) {
   }
 }
 
+// --- BACKGROUND CLEANUP TASK ---
+setInterval(() => {
+  const now = Date.now();
+  let cleanedCount = 0;
+
+  rooms.forEach((room, roomId) => {
+    if (now - room.lastActive > INACTIVITY_TIMEOUT) {
+      destroyRoom(roomId, 'Room expired due to inactivity');
+      cleanedCount++;
+    }
+  });
+
+  if (cleanedCount > 0) {
+    console.log(`[Cleanup] Removed ${cleanedCount} inactive rooms.`);
+  }
+}, CLEANUP_INTERVAL);
+
+
 // Fallback for SPA routing
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-const PORT = process.env.PORT || 3000;
 httpServer.listen(PORT, () => {
   console.log(`FadeChat Server running on port ${PORT}`);
 });
