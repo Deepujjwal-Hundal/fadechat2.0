@@ -1,0 +1,5 @@
+{
+  "name": "Copy of FadeChat",
+  "description": "Secure, ephemeral, localhost-only messaging with temporary room codes.",
+  "requestFramePermissions": []
+}
