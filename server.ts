@@ -30,38 +30,6 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: "*", // Allow dev server connection
-import express from 'express';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import crypto from 'crypto';
-
-// --- CONFIGURATION ---
-const PORT = process.env.PORT || 3000;
-const CLEANUP_INTERVAL = 60 * 1000; // Check every 1 minute
-const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour (Room expires if idle for this long)
-
-// --- TYPES (Mirrored from frontend types.ts for server-side logic) ---
-interface User {
-  id: string;
-  username: string;
-}
-
-interface Room {
-  id: string;
-  code: string;
-  creatorId: string; // This will be the socket.id
-  participantCount: number;
-  lastActive: number; // Timestamp for inactivity cleanup
-}
-
-// --- SERVER SETUP ---
-const app = express();
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: "*", // Allow dev server connection
     methods: ["GET", "POST"]
   }
 });
@@ -123,7 +91,7 @@ io.on('connection', (socket) => {
 
     rooms.set(roomId, newRoom);
     roomCodes.set(code, roomId);
-    
+
     socket.join(roomId);
     callback({ success: true, room: newRoom });
     console.log(`[Create] Room ${code} created by ${user.username}`);
@@ -144,7 +112,7 @@ io.on('connection', (socket) => {
     socket.join(room.id);
     room.participantCount++; // Simple counter
     room.lastActive = Date.now(); // Update activity
-    
+
     // Notify others
     socket.to(room.id).emit('user_joined', {
       username: user.username,
@@ -175,14 +143,14 @@ io.on('connection', (socket) => {
     const user = users.get(socket.id);
     if (user) {
       console.log(`[Disconnect] ${user.username}`);
-      
+
       rooms.forEach((room, roomId) => {
         if (room.creatorId === socket.id) {
           destroyRoom(roomId, 'Creator disconnected');
         } else {
-             // If a normal participant leaves, update activity
-             room.lastActive = Date.now();
-             io.to(roomId).emit('user_left', { userId: socket.id, roomId });
+          // If a normal participant leaves, update activity
+          room.lastActive = Date.now();
+          io.to(roomId).emit('user_left', { userId: socket.id, roomId });
         }
       });
 
@@ -211,10 +179,10 @@ function destroyRoom(roomId: string, reason: string) {
   if (room) {
     console.log(`[Destroy] Room ${room.code} - ${reason}`);
     io.to(roomId).emit('room_destroyed', { roomId, reason });
-    
+
     // Make everyone leave socket room
-    io.in(roomId).disconnectSockets(false); 
-    
+    io.in(roomId).disconnectSockets(false);
+
     // Cleanup State
     roomCodes.delete(room.code);
     rooms.delete(roomId);
