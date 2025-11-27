@@ -107,7 +107,7 @@ const App = () => {
       setError('');
     } catch (err: any) {
       console.error(err);
-      setError(err.message || 'Connection failed. Ensure server is running on port 3000.');
+      setError(err.message || 'Connection failed. Check console.');
     } finally {
       setIsLoading(false);
     }

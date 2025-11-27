@@ -1,11 +1,9 @@
 import { io, Socket } from 'socket.io-client';
 import { User, Room, ChatMessage } from '../types';
 
-// Robust Dev Detection:
-// If running on Vite's default port 5173, assume backend is on 3000.
-// Otherwise (production/served), use relative path (undefined).
-const isDev = window.location.port === '5173';
-const SOCKET_URL = isDev ? 'http://localhost:3000' : undefined;
+// In Dev: Vite proxy forwards requests from relative path to localhost:3000
+// In Prod: Express serves frontend and backend on same port, so relative path works.
+const SOCKET_URL = undefined; 
 
 class SocketService {
   private socket: Socket | null = null;
@@ -13,13 +11,15 @@ class SocketService {
 
   connect(username: string): Promise<User> {
     return new Promise((resolve, reject) => {
-      // Force websocket transport to avoid xhr poll errors (CORS/Proxy issues)
-      this.socket = io(SOCKET_URL || '/', {
-        transports: ['websocket'],
-        reconnectionAttempts: 5
+      // Use relative path '/' (implied by undefined url)
+      this.socket = io({
+        path: '/socket.io', // Standard path
+        transports: ['websocket', 'polling'], // Allow polling fallbacks for robustness through proxies
+        reconnectionAttempts: 5,
+        timeout: 10000
       });
 
-      console.log(`[Socket] Connecting to ${SOCKET_URL || 'relative path'}...`);
+      console.log(`[Socket] Connecting to relative path...`);
 
       this.socket.on('connect', () => {
         console.log('[Socket] Connected. Authenticating...');
@@ -37,8 +37,18 @@ class SocketService {
 
       this.socket.on('connect_error', (err) => {
         console.error('[Socket] Connection Error:', err.message);
-        reject(new Error(`Connection failed: ${err.message}`));
+        // Don't reject immediately on transient errors, let reconnectionAttempts handle it
+        // unless it's a critical auth failure, but for initial connect we reject to show UI error
       });
+      
+      // We set a timeout for the initial promise resolution
+      const timeout = setTimeout(() => {
+          if(this.socket?.connected === false) {
+              reject(new Error("Connection timed out."));
+          }
+      }, 5000);
+
+      this.socket.on('connect', () => clearTimeout(timeout));
 
       // Global event listener setup
       this.setupListeners();

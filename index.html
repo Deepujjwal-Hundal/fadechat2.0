@@ -1,128 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FadeChat</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FadeChat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            neon: {
+              blue: '#00f3ff',
+              purple: '#bc13fe',
+              dark: '#0a0a0f',
+              panel: '#15151e',
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.3s ease-in-out',
+              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0a0a0f;
+      color: #e0e0e0;
+      font-family: 'Courier New', Courier, monospace;
+      /* Terminal vibe */
+      -webkit-user-select: none;
+      /* Safari */
+      -moz-user-select: none;
+      /* Firefox */
+      -ms-user-select: none;
+      /* IE10+/Edge */
+      user-select: none;
+      /* Standard */
+    }
+
+    /* Allow selection on inputs only */
+    input,
+    textarea {
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #15151e;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #333;
+
+      < !DOCTYPE html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>FadeChat</title><script src="https://cdn.tailwindcss.com"></script><script>tailwind.config= {
         theme: {
           extend: {
             colors: {
               neon: {
                 blue: '#00f3ff',
-                purple: '#bc13fe',
-                dark: '#0a0a0f',
-                panel: '#15151e',
-              },
+                  purple: '#bc13fe',
+                  dark: '#0a0a0f',
+                  panel: '#15151e',
+              }
+
+              ,
               animation: {
                 'fade-in': 'fadeIn 0.3s ease-in-out',
-                'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              },
+                  'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              }
+
+              ,
               keyframes: {
                 fadeIn: {
-                  '0%': { opacity: '0', transform: 'translateY(10px)' },
-                  '100%': { opacity: '1', transform: 'translateY(0)' },
+                  '0%': {
+                    opacity: '0', transform: 'translateY(10px)'
+                  }
+
+                  ,
+                  '100%': {
+                    opacity: '1', transform: 'translateY(0)'
+                  }
+
+                  ,
                 }
               }
             }
           }
         }
       }
-    </script>
-    <style>
-      body {
+
+      </script><style>body {
         background-color: #0a0a0f;
         color: #e0e0e0;
-        font-family: 'Courier New', Courier, monospace; /* Terminal vibe */
-        -webkit-user-select: none; /* Safari */
-        -moz-user-select: none; /* Firefox */
-        -ms-user-select: none; /* IE10+/Edge */
-        user-select: none; /* Standard */
+        font-family: 'Courier New', Courier, monospace;
+        /* Terminal vibe */
+        -webkit-user-select: none;
+        /* Safari */
+        -moz-user-select: none;
+        /* Firefox */
+        -ms-user-select: none;
+        /* IE10+/Edge */
+        user-select: none;
+        /* Standard */
       }
+
       /* Allow selection on inputs only */
-      input, textarea {
+      input,
+      textarea {
         user-select: text;
         -webkit-user-select: text;
       }
-      
+
       /* Custom scrollbar */
       ::-webkit-scrollbar {
         width: 8px;
       }
+
       ::-webkit-scrollbar-track {
         background: #15151e;
       }
+
       ::-webkit-scrollbar-thumb {
         background: #333;
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FadeChat</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              neon: {
-                blue: '#00f3ff',
-                purple: '#bc13fe',
-                dark: '#0a0a0f',
-                panel: '#15151e',
-              },
-              animation: {
-                'fade-in': 'fadeIn 0.3s ease-in-out',
-                'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              },
-              keyframes: {
-                fadeIn: {
-                  '0%': { opacity: '0', transform: 'translateY(10px)' },
-                  '100%': { opacity: '1', transform: 'translateY(0)' },
+
+        < !DOCTYPE html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>FadeChat</title><script src="https://cdn.tailwindcss.com"></script><script>tailwind.config= {
+          theme: {
+            extend: {
+              colors: {
+                neon: {
+                  blue: '#00f3ff',
+                    purple: '#bc13fe',
+                    dark: '#0a0a0f',
+                    panel: '#15151e',
+                }
+
+                ,
+                animation: {
+                  'fade-in': 'fadeIn 0.3s ease-in-out',
+                    'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                }
+
+                ,
+                keyframes: {
+                  fadeIn: {
+                    '0%': {
+                      opacity: '0', transform: 'translateY(10px)'
+                    }
+
+                    ,
+                    '100%': {
+                      opacity: '1', transform: 'translateY(0)'
+                    }
+
+                    ,
+                  }
                 }
               }
             }
           }
         }
-      }
-    </script>
-    <style>
-      body {
-        background-color: #0a0a0f;
-        color: #e0e0e0;
-        font-family: 'Courier New', Courier, monospace; /* Terminal vibe */
-        -webkit-user-select: none; /* Safari */
-        -moz-user-select: none; /* Firefox */
-        -ms-user-select: none; /* IE10+/Edge */
-        user-select: none; /* Standard */
-      }
-      /* Allow selection on inputs only */
-      input, textarea {
-        user-select: text;
-        -webkit-user-select: text;
-      }
-      
-      /* Custom scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #15151e;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #333;
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #555;
-      }
-    </style>
-    <script type="module" src="/index.tsx"></script>
+
+        </script><style>body {
+          background-color: #0a0a0f;
+          color: #e0e0e0;
+          font-family: 'Courier New', Courier, monospace;
+          /* Terminal vibe */
+          -webkit-user-select: none;
+          /* Safari */
+          -moz-user-select: none;
+          /* Firefox */
+          -ms-user-select: none;
+          /* IE10+/Edge */
+          user-select: none;
+          /* Standard */
+        }
+
+        /* Allow selection on inputs only */
+        input,
+        textarea {
+          user-select: text;
+          -webkit-user-select: text;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+          background: #15151e;
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background: #333;
+          border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+          background: #555;
+        }
+  </style>
+  <script type="module" src="/index.tsx"></script>
 </head>
-  <body>
-    <div id="root"></div>
-  </body>
+
+<body>
+  <div id="root"></div>
+</body>
+
 </html>
