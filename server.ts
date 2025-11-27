@@ -28,9 +28,13 @@ const io = new Server(httpServer, {
   }
 });
 
-// Serve static files from the build directory (for production)
+// Serve static files from the build directory (for production only)
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-app.use('/', express.static(path.join(__dirname, 'dist')));
+const isProduction = process.env.NODE_ENV === 'production';
+
+if (isProduction) {
+  app.use('/', express.static(path.join(__dirname, 'dist')));
+}
 
 // --- STATE MANAGEMENT (In-Memory) ---
 const rooms = new Map<string, Room>(); // roomId -> Room
@@ -180,12 +184,15 @@ function destroyRoom(roomId: string, reason: string) {
   }
 }
 
-// Fallback for SPA routing
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
+// Fallback for SPA routing (only in production with dist folder)
+if (isProduction) {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  });
+}
 
 const PORT = process.env.PORT || 3000;
 httpServer.listen(PORT, () => {
   console.log(`FadeChat Server running on port ${PORT}`);
+  console.log(`Environment: ${isProduction ? 'production' : 'development'}`);
 });
