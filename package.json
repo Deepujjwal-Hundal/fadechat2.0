@@ -2,12 +2,12 @@
   "name": "fadechat",
   "version": "1.0.0",
   "description": "Secure, ephemeral, localhost-only messaging",
-  "main": "server.ts",
+  "main": "dist-server/server.js",
   "type": "module",
   "scripts": {
-    "start": "ts-node --esm server.ts",
+    "start": "node dist-server/server.js",
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build && tsc -p tsconfig.server.json"
   },
   "dependencies": {
     "express": "^4.18.2",
