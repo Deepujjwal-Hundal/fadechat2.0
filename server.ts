@@ -41,8 +41,13 @@ const projectRoot = path.resolve(__dirname, '..');
 const isProduction = process.env.NODE_ENV === 'production';
 
 if (isProduction) {
+  const distPath = path.join(projectRoot, 'dist');
+  console.log(`[Server] Serving static files from: ${distPath}`);
+  console.log(`[Server] Current directory: ${__dirname}`);
+  console.log(`[Server] Project root: ${projectRoot}`);
+
   // Cast express.static result to any to avoid TypeScript definition mismatch between express and serve-static
-  app.use('/', express.static(path.join(projectRoot, 'dist')) as any);
+  app.use('/', express.static(distPath) as any);
 }
 
 // --- STATE MANAGEMENT (In-Memory) ---

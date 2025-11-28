@@ -18,11 +18,13 @@ const io = new Server(httpServer, {
     }
 });
 // Serve static files from the build directory (for production only)
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const projectRoot = path.resolve(__dirname, '..');
 const isProduction = process.env.NODE_ENV === 'production';
 if (isProduction) {
     // Cast express.static result to any to avoid TypeScript definition mismatch between express and serve-static
-    app.use('/', express.static(path.join(__dirname, 'dist')));
+    app.use('/', express.static(path.join(projectRoot, 'dist')));
 }
 // --- STATE MANAGEMENT (In-Memory) ---
 const rooms = new Map(); // roomId -> Room
@@ -166,7 +168,7 @@ setInterval(() => {
 // Fallback for SPA routing (only in production with dist folder)
 if (isProduction) {
     app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+        res.sendFile(path.join(projectRoot, 'dist', 'index.html'));
     });
 }
 httpServer.listen(PORT, () => {
