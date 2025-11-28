@@ -2,7 +2,6 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 // --- CONFIGURATION ---
 const PORT = process.env.PORT || 3000;
@@ -17,19 +16,6 @@ const io = new Server(httpServer, {
         methods: ["GET", "POST"]
     }
 });
-// Serve static files from the build directory (for production only)
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const projectRoot = path.resolve(__dirname, '..');
-const isProduction = process.env.NODE_ENV === 'production';
-if (isProduction) {
-    // Cast express.static result to any to avoid TypeScript definition mismatch between express and serve-static
-    app.use('/', express.static(path.join(projectRoot, 'dist')));
-}
-// --- STATE MANAGEMENT (In-Memory) ---
-const rooms = new Map(); // roomId -> Room
-const roomCodes = new Map(); // code -> roomId
-const users = new Map(); // socketId -> User
 // Helper: Generate Code
 const generateRoomCode = () => {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
