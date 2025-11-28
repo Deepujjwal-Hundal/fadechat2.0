@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node dist-server/server.js",
     "dev": "vite",
-    "build": "vite build && tsc -p tsconfig.server.json"
+    "build": "vite build && tsc -p tsconfig.server.json && node -e \"try { console.log('Dist contents:', require('fs').readdirSync('dist')); } catch (e) { console.error(e); }\""
   },
   "dependencies": {
     "express": "^4.18.2",
