@@ -23,7 +23,8 @@ const io = new Server(httpServer, {
 // Serve static files from the build directory (for production only)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const projectRoot = path.resolve(__dirname, '..');
+// Since server.js is in the root, __dirname IS the project root
+const projectRoot = __dirname;
 const isProduction = process.env.NODE_ENV === 'production';
 
 if (isProduction) {
