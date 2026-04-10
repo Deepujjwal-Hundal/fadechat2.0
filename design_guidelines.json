@@ -1,0 +1,105 @@
+{
+  "theme": "dark",
+  "archetype": "7 (Electric & Neon)",
+  "concept": "FadeChat: A supercharged, polished temporary private chatting platform. The UI balances intense neon cyberpunk aesthetics with grounded, matte black 'stealth' elements. It visualizes security (E2E encryption, masking) through technical, precision-driven components.",
+  "colors": {
+    "background": "#050505",
+    "surface": "#111111",
+    "surface_elevated": "#1A1A1A",
+    "primary": "#00F0FF",
+    "secondary": "#FF00FF",
+    "accent": "#00FF66",
+    "danger": "#FF3333",
+    "warning": "#FFD700",
+    "text_primary": "#FFFFFF",
+    "text_secondary": "#A0A0A0",
+    "text_muted": "#555555",
+    "border": "#222222",
+    "neon_glow_cyan": "rgba(0, 240, 255, 0.5)",
+    "neon_glow_magenta": "rgba(255, 0, 255, 0.5)"
+  },
+  "typography": {
+    "heading_font": "Unbounded, sans-serif",
+    "body_font": "IBM Plex Sans, sans-serif",
+    "mono_font": "JetBrains Mono, monospace",
+    "scales": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl tracking-tighter font-black",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl tracking-tight font-bold",
+      "h3": "text-xl sm:text-2xl tracking-tight font-semibold",
+      "body": "text-base leading-relaxed font-normal",
+      "small": "text-sm tracking-wide text-text_secondary",
+      "overline": "text-xs uppercase tracking-[0.2em] font-bold text-primary"
+    }
+  },
+  "spacing_and_layout": {
+    "generous_spacing": true,
+    "grid_system": "Bento Grid Protocol. Use 'Control Room' mode for the dashboard (dense, tight gaps like gap-4). Use 'Tetris' grid for login/landing pages (asymmetric, gap-8).",
+    "container_padding": "p-6 md:p-12",
+    "chat_layout": "Minimalist chat layout. Bottom navigation for mobile. Split-screen docking for desktop.",
+    "optical_alignment": "Ensure icons and text align perfectly, specifically using padding tweaks for round elements."
+  },
+  "surface_strategies": {
+    "cards": "Retro-Futurism: Deep black background, subtle neon border (border-white/10 or border-primary/30), optional scanlines overlay.",
+    "glassmorphism": "Used for sticky headers/modals: bg-black/60 backdrop-blur-xl border border-white/10. No muddy gray transparency.",
+    "screenshot_protection": "CSS noise overlay spanning the entire viewport (pointer-events-none, mix-blend-overlay, opacity-20) to distort screenshots.",
+    "chat_bubbles": "High contrast: Sent messages use subtle gradient or solid matte black with neon cyan border. Received messages use dark gray. Add 1px borders."
+  },
+  "components": {
+    "buttons": "Flat backgrounds. Primary buttons: bg-primary text-black font-bold. Secondary: bg-transparent border border-white/20 hover:border-primary hover:text-primary transition-colors.",
+    "inputs": "Shadcn heavily customized. bg-transparent, bottom border only or 1px border-white/10, focus:border-primary focus:ring-1 focus:ring-primary/50.",
+    "security_indicators": "High-contrast utility elements. Red/orange for self-destruct timers. Green/Cyan for E2E encryption and masked IPs.",
+    "room_themes": "Custom selector allowing users to switch primary neon accent (Cyan, Magenta, Green)."
+  },
+  "animations": {
+    "general": "Smooth transitions. Use framer-motion for route changes.",
+    "micro_interactions": "Hover scaling (scale-105), subtle glow expansion (box-shadow on hover).",
+    "chat_messages": "Staggered entrance animations (fade up and slide in)."
+  },
+  "3d_and_effects": {
+    "library": "React Three Fiber (R3F) + Drei",
+    "usage": "Use R3F for interactive 3D avatars in profiles, or floating 3D chat bubbles/security nodes in empty states. Use TSParticles for a secure network node background effect on the login screen.",
+    "lighting": "Cinematic dark lighting in 3D scenes. Use ambientLight (low intensity) + pointLight (colored neon) to match the dark theme."
+  },
+  "icons": {
+    "library": "lucide-react",
+    "style": "Sharp, technical, minimal."
+  },
+  "media": {
+    "image_urls": {
+      "abstract_bg_1": {
+        "url": "https://static.prod-images.emergentagent.com/jobs/40ed10e7-4341-44f1-a335-d3799264c5f6/images/6ff563a26f246ca4d3a6a54313ae33277db0b198b7989b634667efa7b894b970.png",
+        "description": "Dark matte black 3D abstract background with neon cyan/purple wireframes",
+        "usage": "Login screen background, Settings background, or Empty Chat State background"
+      },
+      "avatar_1": {
+        "url": "https://static.prod-images.emergentagent.com/jobs/40ed10e7-4341-44f1-a335-d3799264c5f6/images/0b4bbd5166b060c5ee660bb9b5de42ee0cef85aa28430c69e4256ad22f1814bd.png",
+        "description": "3D hacker avatar with glowing cyan mask",
+        "usage": "Default user avatar 1, Profile preview"
+      },
+      "avatar_2": {
+        "url": "https://static.prod-images.emergentagent.com/jobs/40ed10e7-4341-44f1-a335-d3799264c5f6/images/19fde32bdb01ed208fd708efac6596334784fcccbfa03c2d11750e3b93ba5909.png",
+        "description": "3D futuristic robot face avatar",
+        "usage": "Default user avatar 2, Bot/System avatar"
+      },
+      "avatar_3": {
+        "url": "https://static.prod-images.emergentagent.com/jobs/40ed10e7-4341-44f1-a335-d3799264c5f6/images/55fb45448d8a9af4390ffe401f0ef7544535147bd64ec3fa44bfc4814139cd97.png",
+        "description": "3D abstract geometric crystal avatar",
+        "usage": "Room icon, Encryption secure node visual"
+      }
+    }
+  },
+  "instructions_to_main_agent": [
+    "CRITICAL: Write all React components in .js (JSX) files, NOT .tsx files. Use standard JavaScript.",
+    "Install Google Fonts 'Unbounded' and 'IBM Plex Sans' and 'JetBrains Mono' via CSS imports or layout head.",
+    "Configure tailwind.config.js to include the custom colors (background: #050505, surface: #111111, primary: #00F0FF, etc.) and fonts.",
+    "Implement the UI using Shadcn components (using JS, not TS), but deeply customize them to remove the Vercel/light theme default look. Apply black backgrounds with 1px white/10 borders.",
+    "Build the Auth/Login screen with the abstract_bg_1 image as a background or side panel.",
+    "Create the Dashboard utilizing a dense Bento Grid (Control Room mode) for creating/joining rooms and displaying security statuses (IP Masking, E2E status).",
+    "Develop the Chat Interface featuring message auto-destruction timers (circular countdowns) and encrypted file/voice sharing components.",
+    "Implement 'Screenshot Protection' via a fixed overlay with CSS noise and mix-blend-mode.",
+    "Integrate React Three Fiber (R3F) for visual flair: for example, an interactive 3D crystal (avatar_3 concept) as a loading state, or floating chat bubbles on the landing page.",
+    "Ensure ALL interactive and key informational elements have a 'data-testid' attribute (e.g., data-testid='send-message-btn').",
+    "Incorporate Framer Motion for micro-interactions (hover states, modal popping, staggered message lists).",
+    "NEVER use placeholder images; rely solely on the provided URLs in this JSON."
+  ]
+}
