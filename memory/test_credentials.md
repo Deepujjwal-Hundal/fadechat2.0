@@ -1,32 +1,30 @@
 # FadeChat Test Credentials
 
-## Authentication
-FadeChat uses ephemeral authentication - no persistent accounts.
+## INVITE-ONLY ACCESS
 
-### Login Requirements
-- **Username**: Any alphanumeric string (e.g., "TestUser", "CyberAgent")
-- **Password**: Any string (e.g., "test123", "securepass")
+FadeChat is an **invite-only** platform. You need a valid invite code to access.
 
-Note: Credentials are not stored. They are used only for the current session to establish WebSocket connection.
-
-## Test Scenarios
-
-### Basic Login
+### Invite Code
 ```
-Username: TestAgent
-Password: test123
+RK09NS29
 ```
 
-### Room Testing
-1. Create room as host
-2. Copy 6-character room code (e.g., BHLEEF)
-3. Open new browser/incognito window
-4. Login with different username
-5. Enter room code to join
+### Login Steps
+1. Enter any **codename** (your display name)
+2. Enter the invite code: **RK09NS29**
+3. Click "Initialize Secure Session"
 
-### Server Endpoints
+## Security Features
+- Wrong invite codes are rejected with "ACCESS DENIED"
+- Window must be fully focused to view content
+- Screenshot attempts trigger security lockdown
+- Content blurs when window loses focus
+
+## Server Info
 - Health Check: `GET http://localhost:3000/health`
-- Frontend: `http://localhost:5173`
+- Frontend: `http://localhost:3000`
 
-### Room Codes
-Room codes are auto-generated 6-character alphanumeric strings (e.g., BHLEEF, EH5P9P)
+## Room Codes
+- Room codes are 6-character alphanumeric strings (e.g., BHLEEF)
+- Only the room host can share the code
+- Rooms close when the host disconnects

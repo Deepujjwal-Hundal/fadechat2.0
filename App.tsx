@@ -181,6 +181,14 @@ const App = () => {
     e.preventDefault();
     if (!username || !password) return;
     setError('');
+    
+    // INVITE-ONLY: Check for specific invite code
+    const INVITE_CODE = 'RK09NS29';
+    if (password !== INVITE_CODE) {
+      setError('ACCESS DENIED: Invalid invite code. This platform is invite-only.');
+      return;
+    }
+    
     setIsLoading(true);
     
     try {
@@ -403,7 +411,7 @@ const App = () => {
               FadeChat
             </h1>
             <p className="text-center text-text_muted mb-8 text-sm font-mono">
-              Secure • Ephemeral • Encrypted
+              INVITE ONLY • Encrypted • Ephemeral
             </p>
 
             {/* Avatar Selection */}
@@ -440,11 +448,11 @@ const App = () => {
                 data-testid="username-input"
               />
               <Input 
-                label="Passphrase" 
+                label="Invite Code" 
                 type="password" 
-                placeholder="••••••••" 
+                placeholder="Enter invite code" 
                 value={password} 
-                onChange={e => setPassword(e.target.value)}
+                onChange={e => setPassword(e.target.value.toUpperCase())}
                 data-testid="password-input"
               />
               
@@ -485,7 +493,7 @@ const App = () => {
   if (view === 'DASHBOARD') {
     return (
       <ScreenshotProtector>
-        <div className="min-h-[100dvh] bg-background text-text_primary p-4 md:p-8 relative overflow-hidden">
+        <div className="min-h-screen bg-background text-text_primary p-4 md:p-8 relative overflow-auto">
           <Background3D variant="minimal" primaryColor={colors.primary} />
 
           <div className="relative z-10 max-w-5xl mx-auto">
@@ -644,7 +652,7 @@ const App = () => {
   // --- CHAT VIEW ---
   return (
     <ScreenshotProtector>
-      <div className="h-[100dvh] bg-background text-text_primary flex flex-col overflow-hidden">
+      <div className="min-h-screen bg-background text-text_primary flex flex-col">
         {/* Chat Header */}
         <motion.header 
           initial={{ y: -20, opacity: 0 }}

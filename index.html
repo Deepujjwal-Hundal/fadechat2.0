@@ -77,8 +77,10 @@
     
     html, body, #root {
       height: 100%;
+      min-height: 100vh;
       margin: 0;
       padding: 0;
+      overflow-x: hidden;
     }
     
     body {
@@ -89,7 +91,21 @@
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none;
-      overflow-x: hidden;
+      -webkit-touch-callout: none;
+      -webkit-user-drag: none;
+    }
+
+    /* Prevent screenshots via CSS (experimental) */
+    body.protected-mode {
+      -webkit-filter: blur(0);
+      filter: blur(0);
+    }
+    
+    /* Disable image dragging */
+    img {
+      -webkit-user-drag: none;
+      user-drag: none;
+      pointer-events: none;
     }
 
     input, textarea {

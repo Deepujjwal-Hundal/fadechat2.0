@@ -27,11 +27,10 @@ const __dirname = path.dirname(__filename);
 const projectRoot = __dirname;
 const isProduction = process.env.NODE_ENV === 'production';
 
-if (isProduction) {
-    const distPath = path.join(projectRoot, 'dist');
-    console.log(`[Server] Serving static files from: ${distPath}`);
-    app.use('/', express.static(distPath));
-}
+// Always serve static files from dist folder
+const distPath = path.join(projectRoot, 'dist');
+console.log(`[Server] Serving static files from: ${distPath}`);
+app.use('/', express.static(distPath));
 
 // --- STATE MANAGEMENT (In-Memory) ---
 const rooms = new Map(); // roomId -> Room
@@ -385,12 +384,10 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Fallback for SPA routing
-if (isProduction) {
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(projectRoot, 'dist', 'index.html'));
-    });
-}
+// Fallback for SPA routing - always serve index.html for client routes
+app.get('*', (req, res) => {
+    res.sendFile(path.join(projectRoot, 'dist', 'index.html'));
+});
 
 httpServer.listen(PORT, () => {
     console.log(`
